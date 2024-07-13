@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Booking-Beacon.iml" filepath="$PROJECT_DIR$/.idea/modules/Booking-Beacon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Booking-Beacon.app.unitTest.iml" />
+    </modules>
+  </component>
+</project>
