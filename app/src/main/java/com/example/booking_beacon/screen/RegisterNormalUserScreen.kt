@@ -39,8 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.booking_beacon.R
-import com.example.booking_beacon.model.RegisterNormalUserData
-import com.example.booking_beacon.repo.UserRepo
+import com.example.booking_beacon.model.user.RegisterNormalUserData
 import com.example.booking_beacon.utils.RouteAction
 import com.example.booking_beacon.viewModel.RegisterNormalUserViewModel
 

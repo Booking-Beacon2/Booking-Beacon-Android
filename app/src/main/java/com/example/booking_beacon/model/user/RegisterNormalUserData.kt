@@ -1,4 +1,4 @@
-package com.example.booking_beacon.model
+package com.example.booking_beacon.model.user
 
 import kotlinx.serialization.Serializable
 

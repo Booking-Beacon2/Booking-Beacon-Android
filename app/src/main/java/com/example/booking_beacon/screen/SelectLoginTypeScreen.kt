@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.booking_beacon.enums.LoginType
+import com.example.booking_beacon.enums.UserType
 import com.example.booking_beacon.utils.NavRoute
 import com.example.booking_beacon.utils.RouteAction
 
@@ -32,7 +32,7 @@ fun SelectLoginTypeScreen(routeAction: RouteAction) {
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Button(
-                onClick = { routeAction.navTo("${NavRoute.LoginScreen}/${LoginType.Partner}") }, modifier = Modifier
+                onClick = { routeAction.navTo("${NavRoute.LoginScreen}/${UserType.PARTNER}") }, modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f), shape = RectangleShape
             ) {
@@ -40,7 +40,7 @@ fun SelectLoginTypeScreen(routeAction: RouteAction) {
             }
             Spacer(modifier = Modifier.width(20.dp))
             Button(
-                onClick = {routeAction.navTo("${NavRoute.LoginScreen}/${LoginType.Normal}")}, modifier = Modifier
+                onClick = {routeAction.navTo("${NavRoute.LoginScreen}/${UserType.USER}")}, modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
                     .background(Color.Cyan), shape = RectangleShape

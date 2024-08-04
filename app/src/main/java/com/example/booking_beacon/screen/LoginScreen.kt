@@ -1,5 +1,6 @@
 package com.example.booking_beacon.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,23 +15,37 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.booking_beacon.enums.LoginType
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.booking_beacon.enums.UserType
+import com.example.booking_beacon.model.user.LoginData
 import com.example.booking_beacon.utils.NavRoute
 import com.example.booking_beacon.utils.RouteAction
+import com.example.booking_beacon.viewModel.LoginViewModel
 
 @Composable
-fun LoginScreen(routeAction: RouteAction, loginType: LoginType) {
+fun LoginScreen(
+    routeAction: RouteAction, userType: UserType, loginViewModel: LoginViewModel = viewModel(
+    )
+) {
+    val token by loginViewModel.token.observeAsState();
+
+    val emailInput = remember { mutableStateOf(TextFieldValue()) }
+
+    val passwordInput = remember { mutableStateOf(TextFieldValue()) }
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -45,52 +60,64 @@ fun LoginScreen(routeAction: RouteAction, loginType: LoginType) {
 
         ) {
             Text(
-                text = "BOOKING\nBEACON\n\n${loginType}",
+                text = "BOOKING\nBEACON\n\n${userType}",
                 textAlign = TextAlign.Center,
                 style = TextStyle(fontSize = 40.sp, fontWeight = FontWeight.Bold)
             )
-            LoginView(loginType, routeAction)
-        }
-    }
-}
 
-@Composable
-fun LoginView(loginType: LoginType, routeAction: RouteAction) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Column(horizontalAlignment = Alignment.End) {
-            TextWithTextFieldView(
-                title = "ID",
-                hint = "아이디를 입력해주세요"
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextWithTextFieldView(title = "PW", hint = "비밀번호를 입력해주세요")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(modifier = Modifier.weight(1f), onClick = {
-                if (loginType == LoginType.Normal) {
-                    routeAction.navTo(NavRoute.RegisterNormalUserScreen.routeName);
+            token?.let {
+                    Text(text = "LoginSuccess")
+                    Text(text = "accessToken : ${it.accessToken}")
+                    Text(text = "refreshToken : ${it.refreshToken}")
+
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = Alignment.End) {
+                    TextWithTextFieldView(
+                        title = "ID",
+                        hint = "아이디를 입력해주세요", input = emailInput
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextWithTextFieldView(
+                        title = "PW",
+                        hint = "비밀번호를 입력해주세요",
+                        input = passwordInput
+                    )
                 }
-            }) {
-                Text(text = "회원가입")
-            }
-            Spacer(modifier = Modifier.width(20.dp))
-            Button(modifier = Modifier.weight(1f), onClick = {}) {
-                Text(text = "로그인")
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(modifier = Modifier.weight(1f), onClick = {
+                        if (userType == UserType.USER) {
+                            routeAction.navTo(NavRoute.RegisterNormalUserScreen.routeName);
+                        }
+                    }) {
+                        Text(text = "회원가입")
+                    }
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Button(modifier = Modifier.weight(1f), onClick = {
+                        Log.d("loginInfo",emailInput.value.text)
+                        loginViewModel.login(LoginData(emailInput.value.text,passwordInput.value.text,userType))
+
+                    }) {
+                        Text(text = "로그인")
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun TextWithTextFieldView(title: String, hint: String) {
-    var text by remember { mutableStateOf("") }
+fun TextWithTextFieldView(title: String, hint: String, input: MutableState<TextFieldValue>) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(text = title)
         Spacer(modifier = Modifier.width(16.dp))
-        TextField(value = text, onValueChange = { text = it }, placeholder = { Text(hint) })
+        TextField(
+            value = input.value,
+            onValueChange = { newValue -> input.value = newValue },
+            placeholder = { Text(hint) })
     }
 }

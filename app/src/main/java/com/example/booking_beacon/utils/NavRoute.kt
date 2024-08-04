@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.booking_beacon.enums.LoginType
+import com.example.booking_beacon.enums.UserType
 import com.example.booking_beacon.screen.LoginScreen
 import com.example.booking_beacon.screen.RegisterNormalUserScreen
 import com.example.booking_beacon.screen.SelectLoginTypeScreen
@@ -46,8 +46,8 @@ fun NavigationGraph(startRoute: NavRoute = NavRoute.SelectLoginTypeScreen) {
             "${NavRoute.LoginScreen.routeName}/{loginType}",
             arguments = listOf(navArgument("loginType") { type = NavType.StringType })
         ) { entry ->
-            val loginType = entry.arguments?.getString("loginType") ?: LoginType.Normal.name
-            LoginScreen(routeAction, LoginType.valueOf(loginType))
+            val loginType = entry.arguments?.getString("loginType") ?: UserType.USER.name
+            LoginScreen(routeAction, UserType.valueOf(loginType))
         }
         composable(NavRoute.RegisterNormalUserScreen.routeName) {
             RegisterNormalUserScreen(routeAction = routeAction)

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.booking_beacon.model.RegisterNormalUserData
+import com.example.booking_beacon.model.user.RegisterNormalUserData
 import com.example.booking_beacon.repo.UserRepo
 import kotlinx.coroutines.launch
 
