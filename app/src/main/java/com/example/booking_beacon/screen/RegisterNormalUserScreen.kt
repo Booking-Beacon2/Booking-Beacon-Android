@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,31 +24,44 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.booking_beacon.R
+import com.example.booking_beacon.model.RegisterNormalUserData
+import com.example.booking_beacon.repo.UserRepo
 import com.example.booking_beacon.utils.RouteAction
+import com.example.booking_beacon.viewModel.RegisterNormalUserViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterNormalUserScreen(routeAction: RouteAction) {
-    var id by remember { mutableStateOf(TextFieldValue()) }
+fun RegisterNormalUserScreen(routeAction: RouteAction,registerNormalUserViewModel: RegisterNormalUserViewModel = viewModel()) {
+
+    val userId by registerNormalUserViewModel.userId.observeAsState()
+
+    var idInput by remember { mutableStateOf(TextFieldValue()) }
 
     var emailInput by remember { mutableStateOf(TextFieldValue()) }
 
     val shouldShowPassword = remember { mutableStateOf(false) }
 
     var passwordInput by remember { mutableStateOf(TextFieldValue()) }
+
+    var phoneNumberInput by remember {
+        mutableStateOf(TextFieldValue())
+    }
 
     val passwordResource: (Boolean) -> Int = {
         if (it) {
@@ -84,10 +98,10 @@ fun RegisterNormalUserScreen(routeAction: RouteAction) {
             ) {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = id,
+                    value = idInput,
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    onValueChange = { newValue -> id = newValue },
+                    onValueChange = { newValue -> idInput = newValue },
                     label = { Text("ID") },
                 )
 
@@ -139,9 +153,45 @@ fun RegisterNormalUserScreen(routeAction: RouteAction) {
                     label = { Text("비밀번호") },
                     placeholder = { Text("비밀번호를 입력해주세요") }
                 )
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = phoneNumberInput,
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { Log.d("TAG", "TextFieldTest: 체크버튼 클릭") }) {
+                            Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null)
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    onValueChange = { newValue -> phoneNumberInput = newValue },
+                    label = { Text("휴대폰 번호") },
+                    placeholder = { Text("휴대폰 번호를 입력해 주세요") }
+                )
+
             }
+
+            userId?.let { _ ->
+                routeAction.goBack();
+            } ?: run {
+                Text(text = "No User ID registered yet.", color = Color.Red)
+            }
+
             Button(
-                onClick = {},
+                onClick = {
+                    val registerNormalUserData = RegisterNormalUserData(
+                        idInput.text,
+                        passwordInput.text,
+                        emailInput.text,
+                        phoneNumberInput.text
+                    )
+                    registerNormalUserViewModel.register(registerNormalUserData)
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(innerPadding)
