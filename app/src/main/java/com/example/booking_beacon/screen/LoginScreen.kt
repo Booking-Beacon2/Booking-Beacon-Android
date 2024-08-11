@@ -40,7 +40,7 @@ fun LoginScreen(
     routeAction: RouteAction, userType: UserType, loginViewModel: LoginViewModel = viewModel(
     )
 ) {
-    val token by loginViewModel.token.observeAsState();
+    val token by loginViewModel.token.observeAsState()
 
     val emailInput = remember { mutableStateOf(TextFieldValue()) }
 
@@ -66,9 +66,9 @@ fun LoginScreen(
             )
 
             token?.let {
-                    Text(text = "LoginSuccess")
-                    Text(text = "accessToken : ${it.accessToken}")
-                    Text(text = "refreshToken : ${it.refreshToken}")
+                Text(text = "LoginSuccess")
+                Text(text = "accessToken : ${it.accessToken}")
+                Text(text = "refreshToken : ${it.refreshToken}")
 
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -90,16 +90,20 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Button(modifier = Modifier.weight(1f), onClick = {
-                        if (userType == UserType.USER) {
-                            routeAction.navTo(NavRoute.RegisterNormalUserScreen.routeName);
-                        }
+                        routeAction.navTo("${NavRoute.RegisterScreen}/${userType}")
                     }) {
                         Text(text = "회원가입")
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(modifier = Modifier.weight(1f), onClick = {
-                        Log.d("loginInfo",emailInput.value.text)
-                        loginViewModel.login(LoginData(emailInput.value.text,passwordInput.value.text,userType))
+                        Log.d("loginInfo", emailInput.value.text)
+                        loginViewModel.login(
+                            LoginData(
+                                emailInput.value.text,
+                                passwordInput.value.text,
+                                userType
+                            )
+                        )
 
                     }) {
                         Text(text = "로그인")

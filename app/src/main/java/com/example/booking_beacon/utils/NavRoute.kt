@@ -14,9 +14,15 @@ import com.example.booking_beacon.screen.RegisterNormalUserScreen
 import com.example.booking_beacon.screen.SelectLoginTypeScreen
 
 enum class NavRoute(val routeName: String, val description: String) {
-    SelectLoginTypeScreen("SelectLoginTypeScreen", description = "로그인 타입 선택 화면"),
-    LoginScreen("LoginScreen", description = "로그인 화면"),
-    RegisterNormalUserScreen("RegisterNormalUserScreen", description = "일반 사용자 회원가입 화면")
+    SelectLoginTypeScreen(
+        "SelectLoginTypeScreen",
+        description = "로그인 타입 선택 화면"
+    ),
+    LoginScreen("LoginScreen", description = "로그인 화면"), RegisterScreen(
+        "RegisterScreen",
+        description = "회원가입 화면"
+    )
+
 }
 
 class RouteAction(navHostController: NavHostController) {
@@ -43,14 +49,19 @@ fun NavigationGraph(startRoute: NavRoute = NavRoute.SelectLoginTypeScreen) {
             SelectLoginTypeScreen(routeAction)
         }
         composable(
-            "${NavRoute.LoginScreen.routeName}/{loginType}",
-            arguments = listOf(navArgument("loginType") { type = NavType.StringType })
+            "${NavRoute.LoginScreen.routeName}/{type}",
+            arguments = listOf(navArgument("type") { type = NavType.StringType })
         ) { entry ->
-            val loginType = entry.arguments?.getString("loginType") ?: UserType.USER.name
-            LoginScreen(routeAction, UserType.valueOf(loginType))
+            val userType = entry.arguments?.getString("type") ?: UserType.USER.name
+            LoginScreen(routeAction, UserType.valueOf(userType))
         }
-        composable(NavRoute.RegisterNormalUserScreen.routeName) {
-            RegisterNormalUserScreen(routeAction = routeAction)
+        composable(
+            "${NavRoute.RegisterScreen.routeName}/{type}",
+            arguments = listOf(navArgument("type") { type = NavType.StringType })
+        ) { entry ->
+            val userType = entry.arguments?.getString("type") ?: UserType.USER.name
+
+            RegisterNormalUserScreen(routeAction = routeAction, UserType.valueOf(userType))
         }
 
     }

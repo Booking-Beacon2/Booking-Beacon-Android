@@ -13,15 +13,13 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -39,14 +37,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.booking_beacon.R
+import com.example.booking_beacon.enums.UserType
 import com.example.booking_beacon.model.user.RegisterNormalUserData
+import com.example.booking_beacon.model.user.RegisterPartnerUserData
 import com.example.booking_beacon.utils.RouteAction
 import com.example.booking_beacon.viewModel.RegisterNormalUserViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterNormalUserScreen(routeAction: RouteAction,registerNormalUserViewModel: RegisterNormalUserViewModel = viewModel()) {
+fun RegisterNormalUserScreen(
+    routeAction: RouteAction,
+    userType: UserType,
+    registerNormalUserViewModel: RegisterNormalUserViewModel = viewModel()
+) {
 
     val userId by registerNormalUserViewModel.userId.observeAsState()
 
@@ -62,6 +66,14 @@ fun RegisterNormalUserScreen(routeAction: RouteAction,registerNormalUserViewMode
         mutableStateOf(TextFieldValue())
     }
 
+    var partnerNameInput by remember {
+        mutableStateOf(TextFieldValue())
+    }
+
+    var einInput by remember {
+        mutableStateOf(TextFieldValue())
+    }
+
     val passwordResource: (Boolean) -> Int = {
         if (it) {
             R.drawable.ic_baseline_visibility_24
@@ -72,15 +84,7 @@ fun RegisterNormalUserScreen(routeAction: RouteAction,registerNormalUserViewMode
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                colors = topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text("회원가입")
-                }
-            )
+            CenterAlignedTopAppBar(title = { Text(if (userType == UserType.USER) "일반 회원가입" else "파트너 회원가입") })
         }
     ) { innerPadding ->
         Box(
@@ -173,23 +177,62 @@ fun RegisterNormalUserScreen(routeAction: RouteAction,registerNormalUserViewMode
                     placeholder = { Text("휴대폰 번호를 입력해 주세요") }
                 )
 
+                if (userType == UserType.PARTNER) {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = partnerNameInput,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        onValueChange = { newValue -> partnerNameInput = newValue },
+                        label = { Text("회사명") },
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = einInput,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        onValueChange = { newValue ->
+                            if (newValue.text.length <= 10) {
+                                einInput = newValue
+                            }
+                        },
+                        label = { Text("EIN") },
+                    )
+                }
+
+
             }
 
             userId?.let { _ ->
-                routeAction.goBack();
+                routeAction.goBack()
             } ?: run {
                 Text(text = "No User ID registered yet.", color = Color.Red)
             }
 
             Button(
                 onClick = {
-                    val registerNormalUserData = RegisterNormalUserData(
-                        idInput.text,
-                        passwordInput.text,
-                        emailInput.text,
-                        phoneNumberInput.text
-                    )
-                    registerNormalUserViewModel.register(registerNormalUserData)
+                    if (userType == UserType.USER) {
+
+                        val registerNormalUserData = RegisterNormalUserData(
+                            idInput.text,
+                            passwordInput.text,
+                            emailInput.text,
+                            phoneNumberInput.text
+                        )
+                        registerNormalUserViewModel.registerNormalUser(registerNormalUserData)
+                    } else {
+
+                        val registerPartnerUserData = RegisterPartnerUserData(
+                            idInput.text,
+                            passwordInput.text,
+                            emailInput.text,
+                            phoneNumberInput.text,
+                            partnerNameInput.text,
+                            einInput.text
+                        )
+                        registerNormalUserViewModel.registerPartnerUser(registerPartnerUserData)
+                    }
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
